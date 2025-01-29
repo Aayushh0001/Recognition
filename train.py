@@ -3,9 +3,10 @@ import tensorflow as tf
 from tensorflow import keras
 from keras._tf_keras.keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+import json
 
 def normalize_image(x):
-    x = x / 255.0
+    x = x / 255.0  
     return x
 
 datagen = ImageDataGenerator(
@@ -53,19 +54,17 @@ model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accur
 
 history = model.fit(
     training_data,
-    epochs=10,
+    epochs=20, 
     validation_data=validation_data
 )
 
 test_loss, test_acc = model.evaluate(testing_data)
 print(f"Test accuracy: {test_acc}")
 
+model.save('trained_model.h5')
 print("Model saved as 'trained_model.h5'")
 
-
-
-
-
-
-
-
+class_indices = training_data.class_indices
+with open('class_indices.json', 'w') as f:
+    json.dump(class_indices, f)
+print("Class indices saved to 'class_indices.json'")
