@@ -4,17 +4,47 @@ import numpy as np
 import rawpy
 import matplotlib.pyplot as plt
 import os
-import json
 from matplotlib import rcParams
 
+# Load the trained model
 model = keras.models.load_model('trained_model.h5')
 print("Model loaded successfully!")
 
-with open('class_indices.json', 'r') as f:
-    class_indices = json.load(f)
-class_mapping = {v: k for k, v in class_indices.items()} 
+# Nepali Vowels
+vowels = [
+    "अ", "आ", "इ", "ई", "उ", "ऊ", "ऋ", "ए", "ऐ", "ओ", "औ", "अं", "अः"
+]
 
-img_path = r'C:\AI\organized_dataset\testing\त्र\001_17.jpg'
+# Nepali Consonants
+consonants = [
+    "क", "ख", "ग", "घ", "ङ", "च", "छ", "ज", "झ", "ञ",
+    "ट", "ठ", "ड", "ढ", "ण", "त", "थ", "द", "ध", "न",
+    "प", "फ", "ब", "भ", "म", "य", "र", "ल", "व", "श",
+    "ष", "स", "ह", "क्ष", "त्र", "ज्ञ"
+]
+
+# Nepali Numerals
+numerals = [
+    "०", "१", "२", "३", "४", "५", "६", "७", "८", "९"
+]
+
+class_mapping = {}
+
+for i, numeral in enumerate(numerals):
+    class_mapping[i] = numeral
+
+for i, vowel in enumerate(vowels, start=len(numerals)):
+    class_mapping[i] = vowel
+
+for i, consonant in enumerate(consonants, start=len(numerals) + len(vowels)):
+    class_mapping[i] = consonant
+
+print("Class Mapping:")
+for key, value in class_mapping.items():
+    print(f"{key}: {value}")
+
+
+img_path = r'C:\AI\test images\IMG_5296.DNG'
 
 file_extension = os.path.splitext(img_path)[1].lower()
 
@@ -30,13 +60,15 @@ else:
     raise ValueError("Unsupported file format")
 
 img_array = np.expand_dims(img, axis=0)
+
 img_array = img_array / 255.0
 
 predictions = model.predict(img_array)
-predicted_class_index = np.argmax(predictions, axis=1)[0]
-predicted_character = class_mapping[predicted_class_index]
+predicted_class = np.argmax(predictions, axis=1)
 
-print(f"Predicted class: {predicted_class_index}")
+predicted_character = class_mapping[predicted_class[0]]
+
+print(f"Predicted class: {predicted_class[0]}")
 print(f"Predicted character: {predicted_character}")
 
 rcParams['font.family'] = 'Noto Sans Devanagari'
