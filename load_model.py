@@ -14,7 +14,7 @@ with open('class_indices.json', 'r') as f:
     class_indices = json.load(f)
 class_mapping = {v: k for k, v in class_indices.items()} 
 
-img_path = r'C:\AI\organized_dataset\testing\अः\001_16.jpg'
+img_path = r'C:\AI\organized_dataset\training\इ\001_01.jpg'
 
 file_extension = os.path.splitext(img_path)[1].lower()
 
